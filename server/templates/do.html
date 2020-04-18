@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>2048客户端</title>
+</head>
+
+<body>
+    <div  align="center">
+    </div>
+
+    <div align="center">
+        <input type="button" value="↑" name="↑" onclick="up()" style="height:50px; width:50px;">
+        <input type="button" value="↓" name="↓" onclick="down()" style="height:50px; width:50px;">
+        <input type="button" value="←" name="←" onclick="left()" style="height:50px; width:50px;">
+        <input type="button" value="→" name="→" onclick="right()" style="height:50px; width:50px;">
+    </div>
+</body>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            wsUpdater.start();
+        });
+
+        var wsUpdater = {
+            socket: null,
+            uid: null,
+
+            start: function () {
+                var url = "ws://127.0.0.1:8888/game";
+                wsUpdater.socket = new WebSocket(url);
+                wsUpdater.socket.onmessage = function (ev) {
+                    console.log(ev);
+                    game = JSON.parse(ev.data);
+                    console.log(game);
+                };
+                wsUpdater.socket.onopen = function (ev) {
+                    //若是连接成功，onopen函数会执行
+                    console.log(ev);
+                    msg = 'success';
+                    wsUpdater.socket.send(JSON.stringify(msg));
+                };
+                wsUpdater.socket.onclose = function () {
+                    console.log("Client断开连接!");
+                };
+            }
+        };
+
+
+        function up() {
+            wsUpdater.socket.send(0);
+        }
+
+        function down() {
+            wsUpdater.socket.send(1);
+        }
+
+        function left() {
+            wsUpdater.socket.send(2);
+        }
+        function right() {
+            wsUpdater.socket.send(3);
+        }
+
+    </script>
+</html>
